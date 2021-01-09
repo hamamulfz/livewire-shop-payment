@@ -14,10 +14,28 @@ class Index extends Component
     use WithPagination;
     public $paginate = 10;
     public $search;
+    public $formVisible;
+    public $formUpdate = false;
 
     protected $updateQueryString = [
         ["search" => ["except" =>""]],
     ];
+
+    protected  $listeners = [
+        "formClose" => "formCloseHandler",
+        "productStored" => "productStoredHandler",
+        "productUpdated" => "productUpdatedHandler"
+    ];
+
+    public function showCreate()
+    {
+        if($this->formVisible){
+            $this->formVisible = true;
+        } else {
+            $this->formVisible = false;
+
+        }
+    }
 
     public function mount()
     {
@@ -31,5 +49,32 @@ class Index extends Component
                 ? Product::latest()->paginate($this->paginate) 
                 : Product::latest()->where("name", "like", "%" . $this->search . "%")->paginate($this->paginate)
         ]);
+    }
+    public function formCloseHandler()
+    {
+        # code...
+        $this->formVisible = false;
+    }
+    public function productStoredHandler()
+    {
+        # code...
+        $this->formVisible = false;
+        session()->flash("message", "Your product successfully added.");
+    }
+    
+    public function editProduct($id)
+    {
+        # code...
+        $this->formUpdate = true;
+        $this->formVisible = true;
+        $product = Product::find($id);
+        $this->emit('editProduct', $product );
+    }
+
+    public function productUpdatedHandler()
+    {
+        # code...
+        $this->formVisible = false;
+        session()->flash("message", "Your product successfully updated.");
     }
 }

@@ -1,12 +1,31 @@
 <div>
 
 <div class="container">
+    @if($formVisible)
+        @if ($formUpdate)
+
+            @livewire('product.update')
+
+        @else
+            @livewire('product.create')
+
+        @endif
+    @endif
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Product</div>
+                <div class="card-header">Product
+                <button wire:click="$toggle('formVisible')" class="btn btn-sm btn-primary">Create</button>
+                        
+                </div>
 
                 <div class="card-body">
+
+                @if(session()->has('message'))
+                <div class="alert alert-success">
+                    {{ session("message") }}
+                </div>
+                @endif
 
                     <div class="row">
                         <div class="col">
@@ -40,7 +59,7 @@
                                 <td> {{ $product->name }}</td>
                                 <td>Rp {{number_format(  $product->price , 2, "," , "." )}}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-info text-white">Edit</button>
+                                    <button wire:click="editProduct({{ $product->id }})" class="btn btn-sm btn-info text-white">Edit</button>
                                     <button class="btn btn-sm btn-danger ">Delete</button>
                                 </td>
                             </tr>
